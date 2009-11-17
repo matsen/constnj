@@ -1,0 +1,2 @@
+<*.{byte,native,top,p.native}>: use_pcre, use_unix, use_gsl, use_bigarray
+<**/*.ml>: use_pcre, use_gsl
