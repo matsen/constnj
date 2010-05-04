@@ -1,0 +1,135 @@
+
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb, amsmath, amsthm}   %Theorems
+\usepackage{verbatim}
+
+%\usepackage[notcite,notref]{showkeys} % shows labels
+
+%\newtheorem{thm}{Theorem}[section]
+%\theoremstyle{definition}
+\newtheorem{thm}{Theorem}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{prob}[thm]{Problem}
+\newtheorem{alg}[thm]{Algorithm}
+
+\newcommand{\eat}[1]{}
+\newcommand{\leaves}{\mathcal{L}}
+\newcommand{\edges}{\mathcal{E}}
+\newcommand{\vertices}{\mathcal{V}}
+\newcommand{\rsplits}{\Sigma}
+\newcommand{\ersplits}{\Sigma_E}
+\newcommand{\srsplits}{\Sigma_S}
+\newcommand{\restr}[1]{|_{#1}}
+\newcommand{\join}{\wedge}
+\newcommand{\coalof}{\succeq}
+\newcommand{\strictcoalof}{\succ}
+\newcommand{\coalto}{\preceq}
+\newcommand{\strictcoalto}{\prec}
+%\newcommand{\subtree}{\preceq}
+%\newcommand{\supertree}{\succeq}
+\newcommand{\infimum}{\inf}
+\newcommand{\cut}{C}
+\newcommand{\pari}{(i)}
+\newcommand{\parii}{(ii)}
+\newcommand{\out}{\rho}
+\newcommand{\starif}{\bigstar}
+\newcommand{\sep}{|}
+\newcommand{\path}{\mathsf{p}}
+\newcommand{\drSPR}{d_{\operatorname{rSPR}}}
+\newcommand{\constNJ}{\texttt{constNJ}}
+\newcommand{\ocaml}{\texttt{ocaml}}
+\newcommand{\tl}{\ell} % tree length
+\newcommand{\agr}{\alpha}
+\newcommand{\BG}{CRF14\_BG}
+\newcommand{\lengths}{\texttt{.lengths}}
+\newcommand{\tre}{\texttt{.tre}}
+
+\newcommand{\bx}{\ensuremath{\mathbf{x}}}
+\newcommand{\bF}{\ensuremath{\mathbf{F}}}
+\newcommand{\bH}{\ensuremath{\mathbf{H}}}
+
+\newcommand{\rqtilde}{\ensuremath{\hspace{-1pt}_{\mathbf{\tilde{\;}}}}}
+
+\newcommand{\arxiv}[1]{#1}
+\newcommand{\noarxiv}[1]{}
+
+\renewcommand{\labelenumi}{(\roman{enumi})}
+
+
+\title{\constNJ\ v0.1 Manual}
+\author{Frederick A. Matsen\\
+matsen@berkeley.edu\\
+http://www.stat.berkeley.edu/\rqtilde matsen/
+}
+
+\begin{document}
+\maketitle
+
+\noarxiv{\newpage}
+
+This is a very brief manual for \constNJ. 
+All terminology is described in the paper.
+If you have any questions, or just want me to help you get constNJ running on your problem, please drop me an email.
+
+\section{Getting \constNJ}
+
+\constNJ\ can be downloaded as an x86 linux binary. If you run Apple OS X and are interested in running \constNJ, I may compile it for that platform as well. 
+
+\constNJ\ is written in \ocaml. Most people don't have an \ocaml\ compiler already on their system, so I haven't put the source up on the webpage. But if you would like the source, don't hesitate to email me.
+
+\section{First run of \constNJ}
+
+Enter the \texttt{easy} directory and execute
+
+\verbatiminput{easy.out}
+
+The output displays the step number, then the lengths of the various instances at that step.
+
+In this example, \texttt{easy} is the prefix for the output, and \texttt{-l 2} means that we allow two rSPR moves between the two reconstructed trees.
+
+This should have created three files: \texttt{easy.lengths}, \texttt{easy.0.tre}, \texttt{easy.1.tre}, \texttt{easy.2.tre}, and \texttt{easy.indep.tre}.
+All of the correlated sets trees are indexed by their agreement profile.
+Thus \texttt{easy.2.tre} is a file containing two trees which are two rSPR moves apart.
+The \texttt{.indep.tre} file is the result of running NJ independently on the given distance matrices.
+The \texttt{.lengths} file describes the total lengths of the correlated sets of trees.
+
+\verbatiminput{easy.lengths}
+
+For example, the line \texttt{[|2|]: 2.51791} \ says that the two trees in \texttt{easy.2.tre} have a total length of about 2.51791. 
+
+The various options for \constNJ\ can be seen by running \texttt{constnj --help}.
+
+
+\section{Preparing distance matrices for \constNJ}
+
+Here is what I use to make distance matrices useful for constNJ using the F84 model of sequence evolution. If you have an easier way, please let me know!
+
+\begin{enumerate}
+  \item For each alignment block, make a fasta file with your sequences conforming to the following conventions:
+    \begin{itemize}
+      \item the first sequence is the outgroup
+      \item the ith sequence in each fasta file corresponds to the ith sequence in the other (for details, see the paper describing constNJ)
+    \end{itemize}
+
+  \item Run phyml to estimate transition/transversion ratio and gamma shape parameter.
+    I use the F84phyml.pl script to do so.
+    The statistics can be easily extracted from the phyml \texttt{\_phyml\_stat.txt} file using the parsePhymlStats.pl scripts.
+
+  \item Run DNADIST. I use the run\_dnadist perl script, which depends on the fasta2phylip script, which in turn requires bioperl. 
+
+  \item Because the PHYLIP sequence format puts limits on the length of the sequence names, it may be necessary to replace those in the phymat files with the orignal (unabbreviated) names. This can easily be done using ``visual block'' mode of Vim!
+
+\end{enumerate}
+
+
+%\bibliographystyle{plain}
+%\bibliography{/home/matsen/distrec/writeup/distrec}
+
+\end{document}
