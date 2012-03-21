@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for i in $@
+do
+  fasta2phylip $i;
+  cp `basename $i .fasta`.phy infile;
+  /usr/lib/phylip/bin/dnadist;
+  rm infile;
+  mv outfile `basename $i .fasta`.phymat
+done

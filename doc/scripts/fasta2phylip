@@ -1,0 +1,21 @@
+#! /usr/bin/perl
+use Bio::AlignIO;
+use strict;
+
+foreach my $fname ( @ARGV ) {
+
+  print "converting $fname\n";
+
+  my ($bname) = $fname =~ /(.*)\.[^\.]+/;
+
+  my $in  = Bio::AlignIO->new(-file => $fname ,
+    '-format' => 'fasta');
+  my $out = Bio::AlignIO->new(-file => ">$bname.phy" ,
+    '-format' => 'phylip');
+# note: we quote -format to keep older perl's from complaining.
+
+  while ( my $aln = $in->next_aln() ) {
+    $out->write_aln($aln);
+  }
+
+}
